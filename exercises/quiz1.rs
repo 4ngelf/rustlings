@@ -13,10 +13,14 @@
 //
 // No hints this time ;)
 
-// I AM NOT DONE
+
+const APPLE_COST: i32 = 2;
+const APPLE_DISCOUNT: i32 = 1;
 
 // Put your function here!
-// fn calculate_price_of_apples {
+fn calculate_price_of_apples(cuantity: i32) -> i32 {
+	if cuantity > 40 { cuantity * APPLE_DISCOUNT } else { cuantity * APPLE_COST }
+}
 
 // Don't modify this function!
 #[test]
