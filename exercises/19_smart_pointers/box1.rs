@@ -18,11 +18,10 @@
 //
 // Execute `rustlings hint box1` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
 
 #[derive(PartialEq, Debug)]
 pub enum List {
-    Cons(i32, List),
+    Cons(i32, Box<List>),
     Nil,
 }
 
@@ -35,16 +34,39 @@ fn main() {
 }
 
 pub fn create_empty_list() -> List {
-    todo!()
+    List::Nil
 }
 
 pub fn create_non_empty_list() -> List {
-    todo!()
+    List::Cons(0, Box::new(List::Nil))
+}
+
+impl List {
+    pub fn new() -> List {
+        List::Nil
+    }
+
+    pub fn push(&mut self, value: i32) {
+        let mut child = self; // <- child: &mut List
+        while let List::Cons(_, next) = child { 
+            child = &mut **next;
+            // next:           &Box<List>
+            // *next:          Box<List>
+            // **next:         List
+            // &**next:        &List
+            // &mut **next:    &mut List
+        } 
+
+        // child equals List::Nil after previous loop
+        *child = List::Cons(value, Box::new(List::Nil));
+    }
+
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::List::{Nil, Cons};
 
     #[test]
     fn test_create_empty_list() {
@@ -54,5 +76,36 @@ mod tests {
     #[test]
     fn test_create_non_empty_list() {
         assert_ne!(create_empty_list(), create_non_empty_list())
+    }
+
+    #[test]
+    fn test_list_new(){
+        assert_eq!(Nil, List::new())
+    }
+
+    #[test]
+    fn test_list_push_one(){
+        let mut list = List::new();
+        List::push(&mut list, 63);
+        assert_eq!(
+            Cons(63, Box::new(Nil)),
+            list
+            )
+    }
+
+    #[test]
+    fn test_list_push_five(){
+        let b = Box::new;
+        let mut list = List::new();
+        list.push(1);
+        list.push(2);
+        list.push(3);
+        list.push(4);
+        list.push(5);
+
+        assert_eq!(
+            Cons(1, b(Cons(2, b(Cons(3, b(Cons(4, b(Cons(5, b(Nil)))))))))),
+            list
+            );
     }
 }
